@@ -1,0 +1,18 @@
+---
+
+- name: create the Hyperplane folder if it does not exist
+  file:
+    path: ../processFiles/5-Hyperplanes
+    state: directory
+
+- name: prune the hyperplanes into versions which don't become singularities in my system
+  command: "python3 ./roles/3.1GenerateHyperplanes/files/pruneHyperplanes.py -- {{ item.Name }} {{ item.x }} {{ item.y }} {{ item.z }} {{ item.w }}"
+  with_items:
+    - "{{ hyperplanes }}"
+
+- name: generate three perpendicular hyperplanes to serve as x,y,z to the new t/w timelike dimension
+  become: yes
+  command: "python3 ./roles/3.1GenerateHyperplanes/files/generateHyperplaneAxes.py -- {{ item }}"
+  with_fileglob:
+    - ../processFiles/5-Hyperplanes/*
+

@@ -1,0 +1,15 @@
+---
+
+- name: create the OBJ folder if it does not exist
+  file:
+    path: ../processFiles/7-rotatedOBJ
+    state: directory
+
+- name: import the FBX files
+  become: yes
+  command: "'/mnt/c/Program Files/Blender Foundation/Blender 3.2/blender.exe'  -b -P /roles/5.1ConvertBackToOBJ/files/convertBackToObj.py"
+  register: result
+
+- name: show
+  debug:
+    var: result

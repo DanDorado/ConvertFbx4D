@@ -1,0 +1,70 @@
+---
+
+- name: create the STL folder if it does not exist
+  file:
+    path: ../processFiles/3-OBJintoSTL
+    state: directory
+
+- name: create the Obj folder if it does not exist
+  file:
+    path: ../processFiles/4-STLintoSPL4
+    state: directory
+
+- name: find each directory containing obj files
+  find:
+    paths: ../processFiles/3-OBJintoSTL
+    file_type: directory
+  register: STLFiles
+
+- name: Show file paths
+  debug:
+    msg: "{{ item.path }}"
+  with_items: "{{ STLFiles.files }}"
+
+- name: Show file paths basename
+  debug:
+    msg: "{{ item.path | basename }}"
+  with_items: "{{ STLFiles.files }}"
+
+- name: Show file paths dirname
+  debug:
+    msg: "{{ item.path | dirname }}"
+  with_items: "{{ STLFiles.files }}"
+
+- name: get the root dir and show
+  become: yes
+  command: pwd
+  register: result
+  with_nested:
+    - "{{ STLFiles.files }}"
+
+- name: Show file paths
+  debug:
+    var: result
+    
+- name: convert the STL files into Hollow
+  become: yes
+  command: "python3 ./roles/2.1ConvertSTLsToSPL4/files/STLtoSPL4Hollow.py -- {{ item.0.path | basename }} {{ item.1 }}"
+  with_nested:
+    - "{{ STLFiles.files }}"
+    - "{{ increment_hollow_w }}"
+  when: hollow|bool == True
+
+- name: convert the STL files into KleinlikeLoops
+  become: yes
+  command: "python3 ./roles/2.1ConvertSTLsToSPL4/files/STLtoSPL4Klein.py -- {{ item.0.path | basename }} {{ item.1 }} {{ item.2 }} {{ item.3 }}" 
+  with_nested:
+    - "{{ STLFiles.files }}"
+    - "{{ substituteAxis }}"
+    - "{{ originDistance }}"
+    - "{{ rotations }}"
+  when: kleinlikeLoop|bool == True
+
+# NOTE - CURRENTLY SUPER RESOURCE INTENSIVE
+- name: convert the STL files into Bounded
+  become: yes
+  command: "python3 ./roles/2.1ConvertSTLsToSPL4/files/STLtoSPL4Bounded.py -- {{ item.0.path | basename }} {{ item.1 }}" 
+  with_nested:
+    - "{{ STLFiles.files }}"
+    - "{{ increment_bounded_w }}"
+  when: bounded|bool == True

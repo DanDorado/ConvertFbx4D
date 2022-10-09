@@ -1,0 +1,42 @@
+---
+
+- name: create the Obj folder if it does not exist
+  file:
+    path: ../processFiles/2-FBXintoOBJ
+    state: directory
+
+- name: create the STL folder if it does not exist
+  file:
+    path: ../processFiles/3-OBJintoSTL
+    state: directory
+
+- name: find each .obj file to import
+  find:
+    paths: ../processFiles/2-FBXintoOBJ
+    patterns: "*.obj"
+    recurse: yes
+  register: objFiles
+
+#- name: Show file paths
+#  debug:
+#    msg: "{{ item.path }}"
+#  with_items: "{{ objFiles.files }}"
+#
+#- name: Show file paths basename
+#  debug:
+#    msg: "{{ item.path | basename }}"
+#  with_items: "{{ objFiles.files }}"
+
+- name: import the OBJ files
+  become: yes
+  command: "'/mnt/c/Program Files/Blender Foundation/Blender 3.2/blender.exe'  -b -P /roles/1.2ConvertOBJtoSTL/files/convertOBJtoSTL.py -- {{ item.0.path }} {{ item.0.path | basename }} {{ item.1 }}"
+  register: result
+  retries: 3
+  until: "result is not failed"
+  with_nested:
+    - "{{ objFiles.files }}"
+    - "{{ animation_length_xN }}"
+
+#- name: Shows
+#  debug:
+#    var: result

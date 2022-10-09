@@ -1,0 +1,31 @@
+---
+
+- name: create the folder for the rotated STLs if it does not exist
+  file:
+    path: ../processFiles/6-RotatedSTLFrames
+    state: directory
+
+- name: find each hyperplane file to cut slices with
+  find:
+    paths: ../processFiles/5-Hyperplanes
+    recurse: yes
+  register: hyperplaneFiles
+
+- name: find each spl4 file to be cut
+  find:
+    paths: ../processFiles/4-STLintoSPL4
+    recurse: yes
+  register: spl4Files
+
+- name: generate three perpendicular hyperplanes to serve as x,y,z to the new t/w timelike dimension
+  become: yes
+  command: "python3 ./roles/4.1RotateSpacetime/files/rotateSpacetime.py -- {{ item.0.path }} {{ item.1.path | basename }} {{ item.2 }}"
+  register: result
+  with_nested:
+    - "{{ hyperplaneFiles.files }}"
+    - "{{ spl4Files.files }}"
+    - "{{ sliceSpacetime }}"
+
+- name: Shows
+  debug:
+    var: result
