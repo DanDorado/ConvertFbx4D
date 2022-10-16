@@ -18,7 +18,6 @@
   register: spl4Files
 
 - name: generate three perpendicular hyperplanes to serve as x,y,z to the new t/w timelike dimension
-  become: yes
   command: "python3 ./roles/4.1RotateSpacetime/files/rotateSpacetime.py -- {{ item.0.path }} {{ item.1.path | basename }} {{ item.2 }}"
   register: result
   with_nested:

@@ -55,7 +55,7 @@ centreKleinTotal2=0
 upperLimit=None
 lowerLimit=None
 frameArray=[]
-spl4 = open(spl4Directory+'/'+subdir+'_KleinlikeLoop_subAxis'+str(substituteAxis)+'_originDistance'+str(originDistance)+'rotations'+str(kleinFlip)+'.spl4', 'w+')
+spl4 = open(spl4Directory+'/'+subdir+'_KL_sAxis-'+str(substituteAxis)+'_oDis-'+str(originDistance)+'_rota-'+str(kleinFlip)+'.spl4', 'w+')
 stlFrames = sorted(os.listdir(os.path.join(stlDirectory, subdir)))
 #Get the coords of each triangle in each frame and put it into an array
 for i in range(len(stlFrames)):

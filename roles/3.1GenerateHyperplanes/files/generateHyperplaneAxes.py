@@ -180,4 +180,3 @@ for parts in writeThings:
     nFile.write("\n")
 
 nFile.close()
-    

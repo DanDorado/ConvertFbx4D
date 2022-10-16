@@ -40,7 +40,7 @@ wAxisInc = float(argv[1])
 ######## CURRENTLY WORKING - HOLLOW just converts each STL into prisms between them.
 # For each subdirectory with stl frames, then for each frame create a new .spl4 object
 subdir=argv[0]
-spl4 = open(spl4Directory+'/'+subdir+'_HollowPrism_winc'+str(argv[1])+'.spl4', 'w+')
+spl4 = open(spl4Directory+'/'+subdir+'_HP_w-'+str(argv[1])+'.spl4', 'w+')
 depth=0
 stlFrames = sorted(os.listdir(os.path.join(stlDirectory, subdir)))
 #Gets the first frame to pass to stl1 to start the process

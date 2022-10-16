@@ -16,7 +16,6 @@ import sys
 
 ## Values that could change ##
 # Directory that raw and normalized hyperplanes are stored inside
-hyperplaneDirectory = '../processFiles/5-Hyperplanes'
 spl4Directory = '../processFiles/4-STLintoSPL4'
 RotatedSTLPath = '../processFiles/6-RotatedSTLFrames'
 
@@ -52,7 +51,7 @@ intersectTetrahedronTable=[[[[[[[0,3],[1,3],[2,3]]]],[[[[0,2],[0,3],[1,3]],[[0,2
 hyperplaneFile = str(argv[0])
 print(hyperplaneFile)
 hyperplanes = open(hyperplaneFile, 'r').readlines()
-
+hyperplaneName = os.path.basename(hyperplaneFile)
 frames = int(argv[2])
 
 
@@ -301,8 +300,8 @@ endingDistance=allPrismsDistanceInfo[1]
 increment=((endingDistance-startingDistance)/frames)
 #print("\n increment to seperate frames "+str(increment)+"\n")
 
-if not (os.path.exists(RotatedSTLPath+'/'+spl4Path[:-5]+'_frames:'+str(frames))):
-    os.mkdir(RotatedSTLPath+'/'+spl4Path[:-5]+'_frames:'+str(frames))
+if not (os.path.exists(RotatedSTLPath+'/'+spl4Path[:-5]+'_fr-'+str(frames))):
+    os.mkdir(RotatedSTLPath+'/'+spl4Path[:-5]+'_fr-'+str(frames)+'_HP-'+hyperplaneName)
 
 # For each frame
 # NOTE It is going to be possible (but unlikely in most animations) that there will be legitimate "blank frames", how should we deal?
@@ -312,8 +311,9 @@ while (i<frames):
     constantValue=((i*increment)+0.5*increment)+startingDistance
     #print("\nConstant to take cross-section "+str(constantValue)+" for frame "+str(i))
     # Create a new STL file where we'll write a cross section.
-    frameAsSTL = open(RotatedSTLPath+'/'+spl4Path[:-5]+'_frames:'+str(frames)+'/'+spl4Path[:-5]+str(i)+'.stl', 'w+')
+    frameAsSTL = open(RotatedSTLPath+'/'+spl4Path[:-5]+'_fr-'+str(frames)+'_HP-'+hyperplaneName+'/'+spl4Path[:-5]+str(i)+'_HP-'+hyperplaneName+'.stl', 'w+')
     frameAsSTL.write("solid Created by spacetimerotatepython\n")
+    frameAsSTL.write("\n")  
     # If we are going to write the prism component
     if (renderPrisms):
         j=0
@@ -350,15 +350,16 @@ while (i<frames):
                         dAbove=not dAbove
                         eAbove=not eAbove
 
+                    frameAsSTL.write("\n") 
 
-                    frameAsSTL.write(("\n"))
+
                     #frameAsSTL.write(str(intersectTriangleTable[aAbove][bAbove][cAbove][dAbove][eAbove])+"\n")
                     # Pass the truthy values of the f-stabilized a-e vertices into the table and get the returned triangles which will need to be drawn.
                     trianglesToRender=intersectTriangleTable[aAbove][bAbove][cAbove][dAbove][eAbove]
 
                     # For each triangle we need to render
                     for polygon in trianglesToRender:
-                        frameAsSTL.write("PrismPolygon")
+                        frameAsSTL.write("PrismPolygon ")
                         for triangle in polygon:
                             frameAsSTL.write("facet normal\n")
                             frameAsSTL.write("outer loop\n")
@@ -484,7 +485,7 @@ while (i<frames):
                                 #
                                 #zf=Xn+Zn((c(d-a))/(d(a+d)+cc))+Wn((ad-aa+cc)/(d(a+d)+cc))
                             frameAsSTL.write("endloop\n")
-                            frameAsSTL.write("endfacet\n")  
+                            frameAsSTL.write("endfacet\n") 
             j=j+1
 
 
