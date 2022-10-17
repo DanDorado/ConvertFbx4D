@@ -1,13 +1,13 @@
 ---
 - hosts: localhost
   roles:
-    - 0.1seedFbxFiles
-    - 1.1ConvertFBXtoOBJ
-    - 1.2ConvertOBJtoSTL
-    - 2.1ConvertSTLsToSPL4
-    - 3.1GenerateHyperplanes
-    - 4.1RotateSpacetime
-    #- 5.1ConvertBackToOBJ
+    #- 0.1seedFbxFiles
+    #- 1.1ConvertFBXtoOBJ
+    #- 1.2ConvertOBJtoSTL
+    #- 2.1ConvertSTLsToSPL4
+    #- 3.1GenerateHyperplanes
+    #- 4.1RotateSpacetime
+    - 5.1ConvertBackToOBJ
 
 
 
