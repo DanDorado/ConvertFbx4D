@@ -56,8 +56,22 @@ for filename in os.listdir(subdir):
             print(f)
             bpy.ops.import_mesh.stl(filepath=f)
             objects = bpy.context.scene.objects
+            
+
+            scene = bpy.context.scene
+            selected = bpy.context.selected_objects
+            meshes = [o for o in selected if o.type == 'MESH']
+
+            for obj in meshes:
+                print("MESHYSHUSGIG")
+#                scn.objects.active = obj
+                bpy.ops.object.editmode_toggle()
+                bpy.ops.mesh.select_all(action='SELECT')
+                bpy.ops.mesh.flip_normals() # just flip normals
+
+            bpy.ops.object.mode_set(mode='OBJECT')
             bpy.ops.object.select_all(action='SELECT')
-            bpy.ops.export_scene.obj(filepath=finalObjDirectory+"/"+argv[0]+"/"+filename[:-3]+"obj",use_selection=True)
+            bpy.ops.export_scene.obj(filepath=finalObjDirectory+"/"+argv[0]+"/Flipp"+filename[:-3]+"obj",use_selection=True)
             bpy.ops.object.delete()
             for obj in objects:
                 print(obj.name)
