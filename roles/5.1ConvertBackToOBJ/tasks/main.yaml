@@ -28,15 +28,9 @@
 #  with_items: "{{ STLFiles.files }}"
 #  register: result
 
-#- name: Convert the stl back to a flipped obj
-#  become: yes
-#  command: "'/mnt/c/Program Files/Blender Foundation/Blender 3.2/blender.exe'  -b -P /roles/5.1ConvertBackToOBJ/files/convertBackToObjF.py -- {{ item.path | basename }}"
-#  with_items: "{{ STLFiles.files }}"
-#  register: result
-
 - name: Convert the stl back to a flipped obj, a nonflipped obj then combine the two
   become: yes
-  command: "'/mnt/c/Program Files/Blender Foundation/Blender 3.2/blender.exe'  -b -P /roles/5.1ConvertBackToOBJ/files/convertBackToObjB.py -- {{ item.path | basename }}"
+  command: "'/mnt/c/Program Files/Blender Foundation/Blender 3.2/blender.exe'  -b -P /roles/5.1ConvertBackToOBJ/files/convertBackToObjDoubleSided.py -- {{ item.path | basename }}"
   with_items: "{{ STLFiles.files }}"
   register: result
 

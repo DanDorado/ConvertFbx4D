@@ -1,0 +1,17 @@
+Open Unity
+
+window->Package Manager-> Mega Cache -> Import -> Import
+
+Game Object -> Create Other -> MegaCache -> Object Cache
+
+Last -> e.g. 199
+
+Load Frames -> C:\Users\DanDo\OneDrive\Desktop\FinalFrames
+
+Animate -> YES
+FPS -> ~10
+
+Mesh Renderer -> Materials -> Element 0 -> Default-Material
+Add element - Default Material
+
+Move it to be better in the frame

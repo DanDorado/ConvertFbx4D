@@ -63,7 +63,6 @@ for filename in os.listdir(subdir):
             meshes = [o for o in selected if o.type == 'MESH']
 
             for obj in meshes:
-                print("MESHYSHUSGIG")
 #                scn.objects.active = obj
                 bpy.ops.object.editmode_toggle()
                 bpy.ops.mesh.select_all(action='SELECT')
@@ -78,7 +77,7 @@ for filename in os.listdir(subdir):
             scene = bpy.context.scene
 
             bpy.ops.object.select_all(action='SELECT')
-            bpy.ops.export_scene.obj(filepath=finalObjDirectory+"/"+argv[0]+"/DubbFlipp"+filename[:-3]+"obj",use_selection=True)
+            bpy.ops.export_scene.obj(filepath=finalObjDirectory+"/"+argv[0]+"/DoubleSided"+filename[:-3]+"obj",use_selection=True)
             bpy.ops.object.delete()
             for obj in objects:
                 print(obj.name)

@@ -1,13 +1,14 @@
 ---
 - hosts: localhost
   roles:
-    #- 0.1seedFbxFiles
-    #- 1.1ConvertFBXtoOBJ
-    #- 1.2ConvertOBJtoSTL
-    #- 2.1ConvertSTLsToSPL4
-    #- 3.1GenerateHyperplanes
-    #- 4.1RotateSpacetime
+    - 0.1seedFbxFiles
+    - 1.1ConvertFBXtoOBJ
+    - 1.2ConvertOBJtoSTL
+    - 2.1ConvertSTLsToSPL4
+    - 3.1GenerateHyperplanes
+    - 4.1RotateSpacetime
     - 5.1ConvertBackToOBJ
+    - 6.1UnityImport
 
 
 
@@ -64,4 +65,4 @@
   # -- Rotate Spacetime --
 
     # Number of slices to cut the spl4 4-dimensional object into perpendicular to the chosen hyperplane
-    sliceSpacetime: [10]
+    sliceSpacetime: [200]

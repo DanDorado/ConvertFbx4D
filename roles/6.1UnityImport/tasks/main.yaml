@@ -1,0 +1,29 @@
+---
+
+- name: Create the default copy folder if it does not exist
+  file:
+    path: /mnt/c/Users/DanDo/OneDrive/Desktop/FinalFrames/ansibleexports
+    state: directory
+
+- name: Copy over the needed files from the previous stage into this new folder.
+  copy:
+    src: ../processFiles/7-rotatedOBJ/
+    dest: /mnt/c/Users/DanDo/OneDrive/Desktop/FinalFrames/ansibleexports/
+
+#- name: Attempt to run the Unity project
+#  become: yes
+#  command: "/mnt/c/Users/DanDo/proto/2021.3.11f1/Editor/Unity.exe -projectPath '/mnt/c/Users/DanDo/proto/OKO'"
+#  register: result
+#
+#- name: Show output from the python script
+#  debug:
+#    var: result
+
+#  C:\Users\DanDo\proto\2021.3.11f1\Editor
+
+#  command: "/mnt/c/Users/DanDo/proto/2021.3.11f1/Editor/Unity.exe -projectPath '/home/dandorado/blender/ansible/processFiles/8-unityProject/unityprof'"
+
+# '/mnt/c/Users/DanDo/proto/New Unity Project'
+
+
+# '/mnt/c/Users/DanDo/proto/OKO'

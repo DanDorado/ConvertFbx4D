@@ -311,7 +311,7 @@ while (i<frames):
     constantValue=((i*increment)+0.5*increment)+startingDistance
     #print("\nConstant to take cross-section "+str(constantValue)+" for frame "+str(i))
     # Create a new STL file where we'll write a cross section.
-    frameAsSTL = open(RotatedSTLPath+'/'+spl4Path[:-5]+'_fr-'+str(frames)+'_HP-'+hyperplaneName+'/'+spl4Path[:-5]+str(i)+'_HP-'+hyperplaneName+'.stl', 'w+')
+    frameAsSTL = open(RotatedSTLPath+'/'+spl4Path[:-5]+'_fr-'+str(frames)+'_HP-'+hyperplaneName+'/'+spl4Path[:-5]+'_HP-'+hyperplaneName+"_"+str(("%04d" % (i,)))+'.stl', 'w+')
     frameAsSTL.write("solid Created by spacetimerotatepython\n")
     frameAsSTL.write("\n")  
     # If we are going to write the prism component
