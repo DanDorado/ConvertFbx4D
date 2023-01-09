@@ -26,6 +26,12 @@
     msg: "{{ item.path | basename }}"
   with_items: "{{ STLFiles.files }}"
 
+- name: create the Basename folder if it does not exist
+  file:
+    path: "../processFiles/4-STLintoSPL4/{{ item.path | basename }}"
+    state: directory
+  with_items: "{{ STLFiles.files }}"
+
 - name: Show file paths dirname
   debug:
     msg: "{{ item.path | dirname }}"

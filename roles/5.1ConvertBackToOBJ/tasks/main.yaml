@@ -9,28 +9,39 @@
   find:
     paths: ../processFiles/6-RotatedSTLFrames
     file_type: directory
-  register: STLFiles
+  register: STLfirstSubdirs
 
 - name: Show file paths basename
   debug:
     msg: "{{ item.path | basename }}"
-  with_items: "{{ STLFiles.files }}"
+  with_items: "{{ STLfirstSubdirs.files }}"
 
 - name: create the OBJ subdir if it does not exist
   file:
     path: ../processFiles/7-rotatedOBJ/{{ item.path | basename }}
     state: directory
+  with_items: "{{ STLfirstSubdirs.files }}"
+
+- name: find each starting stl file in order to get information on the subdirs (wanted to do this a more elegant way but couldn't)
+  find:
+    paths: ../processFiles/6-RotatedSTLFrames
+    patterns: "*0000.stl"
+    recurse: yes
+  register: STLFiles
+
+- name: This returns the name of the main original animation
+  debug:
+    msg: "{{ item.path | dirname | regex_search('[^\/]+(?=\/[^\/]+\/?$)')}}"
   with_items: "{{ STLFiles.files }}"
 
-#- name: Convert the stl back to an obj
-#  become: yes
-#  command: "'/mnt/c/Program Files/Blender Foundation/Blender 3.2/blender.exe'  -b -P /roles/5.1ConvertBackToOBJ/files/convertBackToObj.py -- {{ item.path | basename }}"
-#  with_items: "{{ STLFiles.files }}"
-#  register: result
+- name: This returns the path of the exact animation
+  debug:
+    msg: "{{ item.path  | regex_search('[^\/]+(?=\/[^\/]+\/?$)')}}"
+  with_items: "{{ STLFiles.files }}"
 
 - name: Convert the stl back to a flipped obj, a nonflipped obj then combine the two
   become: yes
-  command: "'/mnt/c/Program Files/Blender Foundation/Blender 3.2/blender.exe'  -b -P /roles/5.1ConvertBackToOBJ/files/convertBackToObjDoubleSided.py -- {{ item.path | basename }}"
+  command: "'/mnt/c/Program Files/Blender Foundation/Blender 3.2/blender.exe'  -b -P /roles/5.1ConvertBackToOBJ/files/convertBackToObjDoubleSided.py -- {{ item.path | dirname | regex_search('[^\/]+(?=\/[^\/]+\/?$)')}} {{ item.path  | regex_search('[^\/]+(?=\/[^\/]+\/?$)')}}"
   with_items: "{{ STLFiles.files }}"
   register: result
 

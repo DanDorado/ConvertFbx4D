@@ -11,14 +11,19 @@
     recurse: yes
   register: hyperplaneFiles
 
-- name: find each spl4 file to be cut
+- name: find each spl4 file to be cut into slices
   find:
     paths: ../processFiles/4-STLintoSPL4
     recurse: yes
   register: spl4Files
 
+- name: Use regex to get the last base of the file to pass it through
+  debug:
+    msg: "{{ item.path | regex_search('[^\/]+(?=\/[^\/]+\/?$)')}}"
+  with_items: "{{ spl4Files.files }}"
+
 - name: generate three perpendicular hyperplanes to serve as x,y,z to the new t/w timelike dimension
-  command: "python3 ./roles/4.1RotateSpacetime/files/rotateSpacetime.py -- {{ item.0.path }} {{ item.1.path | basename }} {{ item.2 }}"
+  command: "python3 ./roles/4.1RotateSpacetime/files/rotateSpacetime.py -- {{ item.0.path }} {{ item.1.path | basename }} {{ item.2 }} {{ item.1.path | regex_search('[^\/]+(?=\/[^\/]+\/?$)')}}"
   register: result
   with_nested:
     - "{{ hyperplaneFiles.files }}"

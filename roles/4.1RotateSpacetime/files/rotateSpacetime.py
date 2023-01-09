@@ -86,7 +86,10 @@ Bz = float(zAxis[0])
 Cz = float(zAxis[1])
 Dz = float(zAxis[3])
 
+
+# Get the path of the spl4 and the directory above it
 spl4Path=str(argv[1])
+spl4Dir=str(argv[3])
 
 # Creates a list of the needed spl4 data of the form:
 # prisms[i][0-5][0-4]
@@ -97,7 +100,7 @@ spl4Path=str(argv[1])
 
 #print("Starting with "+spl4Path)
 
-spl4 = open(spl4Directory+'/'+spl4Path, 'r').readlines()
+spl4 = open(spl4Directory+'/'+spl4Dir+'/'+spl4Path, 'r').readlines()
 
 #print(len(spl4))
 #Starting at zero, with the prisms and tetrahedron lists empty
@@ -300,8 +303,11 @@ endingDistance=allPrismsDistanceInfo[1]
 increment=((endingDistance-startingDistance)/frames)
 #print("\n increment to seperate frames "+str(increment)+"\n")
 
-if not (os.path.exists(RotatedSTLPath+'/'+spl4Path[:-5]+'_fr-'+str(frames))):
-    os.mkdir(RotatedSTLPath+'/'+spl4Path[:-5]+'_fr-'+str(frames)+'_HP-'+hyperplaneName)
+if not (os.path.exists(RotatedSTLPath+'/'+spl4Dir)):
+    os.mkdir(RotatedSTLPath+'/'+spl4Dir)
+
+if not (os.path.exists(RotatedSTLPath+'/'+spl4Dir+'/'+spl4Path[:-5]+'_fr-'+str(frames)+'_HP-'+hyperplaneName)):
+    os.mkdir(RotatedSTLPath+'/'+spl4Dir+'/'+spl4Path[:-5]+'_fr-'+str(frames)+'_HP-'+hyperplaneName)
 
 # For each frame
 # NOTE It is going to be possible (but unlikely in most animations) that there will be legitimate "blank frames", how should we deal?
@@ -311,7 +317,7 @@ while (i<frames):
     constantValue=((i*increment)+0.5*increment)+startingDistance
     #print("\nConstant to take cross-section "+str(constantValue)+" for frame "+str(i))
     # Create a new STL file where we'll write a cross section.
-    frameAsSTL = open(RotatedSTLPath+'/'+spl4Path[:-5]+'_fr-'+str(frames)+'_HP-'+hyperplaneName+'/'+spl4Path[:-5]+'_HP-'+hyperplaneName+"_"+str(("%04d" % (i,)))+'.stl', 'w+')
+    frameAsSTL = open(RotatedSTLPath+'/'+spl4Dir+'/'+spl4Path[:-5]+'_fr-'+str(frames)+'_HP-'+hyperplaneName+'/'+spl4Path[:-5]+'_HP-'+hyperplaneName+"_"+str(("%04d" % (i,)))+'.stl', 'w+')
     frameAsSTL.write("solid Created by spacetimerotatepython\n")
     frameAsSTL.write("\n")  
     # If we are going to write the prism component

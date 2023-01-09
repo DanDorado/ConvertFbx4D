@@ -15,6 +15,7 @@ import math
 import os
 import re
 import sys
+import glob
 
 
 #
@@ -22,9 +23,7 @@ import sys
 # Animation speed (how far apart frames are)
 animSpeed=1
 # save/load .obj files to/from
-finalObjDirectory = '../processFiles/7-rotatedOBJ'
 # load .stl files from
-stlDirectory = '../processFiles/6-RotatedSTLFrames'
 
 
 # Get the arguments and save as strings
@@ -45,39 +44,69 @@ bpy.ops.object.delete()
 ######## Import final STLs ##########
 
 
-# For each subdirectory with obj frames, then for each frame import it back in
-subdir=os.path.join(stlDirectory, argv[0])
-for filename in os.listdir(subdir):
-    if re.search("stl", filename):
-        f = os.path.join(subdir, filename)
-        # checking if it is a file
-        if os.path.isfile(f):
-            print("FOUND STL\n\n\n")
-            print(f)
-            bpy.ops.import_mesh.stl(filepath=f)
-            objects = bpy.context.scene.objects
-            
+# Argv0 should be the first subdir specific to the original animation, Argv1 should be the second specific to the 4d shape
+#print("ArgV0                      "+argv[0])
+#print("ArgV1                      "+argv[1])
 
+
+# I ended up doing this using os.getcwd() since for some reason it didn't work otherwise.
+# It gets to the processfile directory and then constructs the subdirs based off of argv, creating them for the endpath if not existing.
+# endpath will be what is copied over in the final ansible stage for unity to import with Megacache.
+startPath = os.getcwd()
+
+startPath=os.path.split(startPath)[0]
+
+startPath=os.path.join(startPath, "processFiles")
+
+endPath=os.path.join(startPath, "7-rotatedOBJ")
+startPath=os.path.join(startPath, "6-RotatedSTLFrames")
+
+startPath=os.path.join(startPath, argv[0])
+endPath=os.path.join(endPath, argv[0])
+isExist = os.path.exists(endPath)
+if not isExist:
+   os.makedirs(endPath)
+
+
+startPath=os.path.join(startPath, argv[1])
+endPath=os.path.join(endPath, argv[1])
+isExist = os.path.exists(endPath)
+if not isExist:
+   os.makedirs(endPath)
+
+
+# Gets the stl files in the startPath directory and then imports them into blender.
+# We then need to make them double-sided since the normals are messed up, and I want to use a default material.
+# I do this by importing them once, flipping the normals, then importing it again on top.
+# Then export as an object
+
+listofDirs=list(glob.glob(startPath+"/*"))
+#print(listofDirs)
+
+for filename in listofDirs:
+    if re.search("stl", filename):
+        print("FOUND STL\n\n\n")
+        if os.path.isfile(filename):
+            print(filename)
+            bpy.ops.import_mesh.stl(filepath=filename)
+            objects = bpy.context.scene.objects
             scene = bpy.context.scene
             selected = bpy.context.selected_objects
             meshes = [o for o in selected if o.type == 'MESH']
-
             for obj in meshes:
-#                scn.objects.active = obj
                 bpy.ops.object.editmode_toggle()
                 bpy.ops.mesh.select_all(action='SELECT')
-                bpy.ops.mesh.flip_normals() # just flip normals
+                bpy.ops.mesh.flip_normals()
 
             bpy.ops.object.mode_set(mode='OBJECT')
-
-            bpy.ops.import_mesh.stl(filepath=f)
+            bpy.ops.import_mesh.stl(filepath=filename)
             objects = bpy.context.scene.objects
             bpy.ops.object.select_all(action='SELECT')
 
             scene = bpy.context.scene
 
             bpy.ops.object.select_all(action='SELECT')
-            bpy.ops.export_scene.obj(filepath=finalObjDirectory+"/"+argv[0]+"/DoubleSided"+filename[:-3]+"obj",use_selection=True)
+            bpy.ops.export_scene.obj(filepath=endPath+"/DoubleSided"+os.path.basename(filename)[:-3]+"obj",use_selection=True)
             bpy.ops.object.delete()
-            for obj in objects:
-                print(obj.name)
+            #for obj in objects:
+            #    print(obj.name)
