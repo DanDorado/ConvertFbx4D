@@ -60,3 +60,7 @@ Not 100% on the below commands:
  sudo apt-get install python3-numpy python3-scipy python3-matplotlib ipython3 python3-notebook python3-pandas python3-sympy python3-nose
 
 pip install --target=../packages/vtk vtk
+
+
+
+

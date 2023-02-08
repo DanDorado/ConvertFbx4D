@@ -1,0 +1,39 @@
+Unity (3.3.0)
+
+New Project - VR - name (VRIntegration)
+
+Create Project
+
+File - Build Settings
+
+Platform -> Android
+
+Run Device -> Oculus Quest 2
+
+Switch Platform
+____
+Edit - Project Settings
+
+Company Name -> DanDorado
+
+XR Plug-In Management
+
+Tick Oculus
+
+
+Build and Run should work
+
+
+
+____
+
+Create Folder - Scripts
+Create C# Script - CreateScene
+
+Paste in CreateScene.cs
+
+Also Copy all of Megafiers into Assets
+
+DanCustomTools - ImportAll
+
+Delete CreateScene.cs

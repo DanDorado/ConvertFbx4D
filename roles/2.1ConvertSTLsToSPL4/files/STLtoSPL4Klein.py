@@ -1,11 +1,3 @@
-## Command to make the file run ##
-#
-# python3 convertStlsToSpl4.py -- Hollow                         (or other)
-#
-## ARGV ##
-#ARGV[0] - TYPE Hollow / Bounded / Hyperloop / Klein
-#
-
 #Import regular modules needed
 import math
 import os

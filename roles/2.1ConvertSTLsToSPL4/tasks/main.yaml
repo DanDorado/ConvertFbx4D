@@ -66,11 +66,19 @@
     - "{{ rotations }}"
   when: kleinlikeLoop|bool == True
 
-# NOTE - CURRENTLY SUPER RESOURCE INTENSIVE
-- name: convert the STL files into Bounded
+- name: convert the STL files into Block Bounded (makes a convex shape)
   become: yes
-  command: "python3 ./roles/2.1ConvertSTLsToSPL4/files/STLtoSPL4Bounded.py -- {{ item.0.path | basename }} {{ item.1 }}" 
+  command: "python3 ./roles/2.1ConvertSTLsToSPL4/files/STLtoSPL4BlockBounded.py -- {{ item.0.path | basename }} {{ item.1 }}" 
   with_nested:
     - "{{ STLFiles.files }}"
     - "{{ increment_bounded_w }}"
-  when: bounded|bool == True
+  when: blockBounded|bool == True
+
+# NOTE - CURRENTLY SUPER RESOURCE INTENSIVE
+- name: convert the STL files into exact Bounded (perfectly, including concave elements)
+  become: yes
+  command: "python3 ./roles/2.1ConvertSTLsToSPL4/files/STLtoSPL4FullBounded.py -- {{ item.0.path | basename }} {{ item.1 }}" 
+  with_nested:
+    - "{{ STLFiles.files }}"
+    - "{{ increment_bounded_w }}"
+  when: fullBounded|bool == True

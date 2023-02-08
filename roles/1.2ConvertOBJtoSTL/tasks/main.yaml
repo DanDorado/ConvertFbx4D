@@ -29,7 +29,7 @@
 
 - name: import the OBJ files
   become: yes
-  command: "'/mnt/c/Program Files/Blender Foundation/Blender 3.2/blender.exe'  -b -P /roles/1.2ConvertOBJtoSTL/files/convertOBJtoSTL.py -- {{ item.0.path }} {{ item.0.path | basename }} {{ item.1 }}"
+  command: "'/mnt/c/Program Files/Blender Foundation/Blender 3.2/blender.exe'  -b -P /roles/1.2ConvertOBJtoSTL/files/convertOBJtoSTLBalance.py -- {{ item.0.path }} {{ item.0.path | basename }} {{ item.1 }}"
   register: result
   retries: 3
   until: "result is not failed"

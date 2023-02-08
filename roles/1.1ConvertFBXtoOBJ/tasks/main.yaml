@@ -12,7 +12,7 @@
 
 - name: import the FBX files
   become: yes
-  command: "'/mnt/c/Program Files/Blender Foundation/Blender 3.2/blender.exe'  -b -P /roles/1.1ConvertFBXtoOBJ/files/convertFBXtoOBJ.py -- {{ item }}"
+  command: "'/mnt/c/Program Files/Blender Foundation/Blender 3.2/blender.exe'  -b -P /roles/1.1ConvertFBXtoOBJ/files/convertFBXtoOBJBalance.py -- {{ item }}"
   register: result
   with_fileglob:
     - ../processFiles/1-originalFBX/*
