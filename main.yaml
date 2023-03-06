@@ -15,7 +15,7 @@
   # -- ConvertOBJtoSTL --
 
     # Generates animations of multiple animation runs chained together N times for the listed values of N.
-    animation_length_xN: [5]
+    animation_length_xN: [3]
 
   # -- ConvertSTLstoSPL4 --
 
@@ -34,11 +34,11 @@
 
     # kleinlikeLoop vars - note the way I have set up Kleinlike assumes that the animation ends at the same position it started (a looping animation)
       # substituteAxis (value only accepts 0,1,2) is the spatial dimension which is rotated into time to form the loop (The remaining two dimensions are rotated into each other is kleinFlip is not set to 0)
-    substituteAxis: [1,2,0]
+    substituteAxis: [0] #[1,2,0]
       # originDistance is the distance (as a multiple of the distance from the centre of the shape to its edge in that dimension) that the shape is rotated about in spacetime. N.B I think values between 1 and -1 may cause weird behaviour. Since the rotation occus on one space-time axis of spacetime it is also the conversion rate between time and space. Can't be bothered to make it 100% match up to wAxisInc above, since my main concern was to make loops of useful size easier.
     originDistance: [1.1]
       # rotations is the number of times that the shape flips around the two remaining spatial axes which it is not already rotating into time. An integer number will always create a coherant "regular" 4d shape. If the shape has a symettry of the form that you could rotate it a fraction of 360 degrees and it would be self similar, then you should also be able to exclude the remaining spatial dimension and rotate by a non-integer multiple of that fraction in order to create a functional Klein shape (not tested)
-    rotations: [0,3]
+    rotations: [0]
 
     # Bounded Vars
         # This determines the amount that w increments per frame, in other words the conversion rate between time and space.
@@ -49,16 +49,16 @@
 
     # List of hyperplanes to use, where hyperplanes are four floats for the x,y,z,w components of the vector which we take hyperplane snapshosts as paralell to, and a string for the name.
     hyperplanes:
-      - Name: CoolHyperplane
-        x:    0.1
-        y:    2.2
-        z:    -1.4
-        w:    -14
-      - Name: Hyperplane1
-        x:    0
-        y:    1
-        z:    0
-        w:    0
+      # - Name: CoolHyperplane
+      #   x:    0.1
+      #   y:    2.2
+      #   z:    -1.4
+      #   w:    -14
+      # - Name: Hyperplane1
+      #   x:    0
+      #   y:    1
+      #   z:    0
+      #   w:    0
       - Name: Hyperplane2
         x:    1
         y:    1
@@ -68,4 +68,4 @@
   # -- Rotate Spacetime --
 
     # Number of slices to cut the spl4 4-dimensional object into perpendicular to the chosen hyperplane
-    sliceSpacetime: [400]
+    sliceSpacetime: [30]
