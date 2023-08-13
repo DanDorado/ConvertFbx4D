@@ -9,6 +9,19 @@
   copy:
     src: ../processFiles/7-rotatedOBJ/
     dest: /mnt/c/Users/DanDo/OneDrive/Desktop/FinalFrames/ansibleexports/
+  when: not overlayShapes
+
+- name: Copy over the needed files from the previous stage into this new folder.
+  copy:
+    src: ../processFiles/7-rotatedOBJ/
+    dest: /mnt/c/Users/DanDo/OneDrive/Desktop/FinalFrames/lumpedansibleexports/
+  when: overlayShapes
+
+
+# Local justification C:\Users\DanDo\OneDrive\Desktop\FinalFrames\ansibleexports
+
+
+
 
 #- name: Attempt to run the Unity project
 #  become: yes

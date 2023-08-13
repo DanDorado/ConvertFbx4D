@@ -11,17 +11,12 @@
 # Import the needed modules (bpy is Blender)
 
 import bpy
-import math
 import os
-import re
 import sys
-import glob
 
 
 #
 ## Values that could change ##
-# Animation speed (how far apart frames are)
-animSpeed=1
 # save/load .obj files to/from
 # load .stl files from
 
@@ -66,7 +61,7 @@ endPath=os.path.join(endPath, argv[0])
 isExist = os.path.exists(endPath)
 if not isExist:
    os.makedirs(endPath)
-   print("MAKIN PART 1")
+   print("MAKIN PART 1: "+endPath)
 
 
 startPath=os.path.join(startPath, argv[1])
@@ -74,7 +69,7 @@ endPath=os.path.join(endPath, argv[1])
 isExist = os.path.exists(endPath)
 if not isExist:
    os.makedirs(endPath)
-   print("MAKIN PART 2")
+   print("MAKIN PART 2:"+endPath)
    if os.path.isfile(endPath):
     print("AND IT IS REALLY A DIRECTORY")
 
@@ -88,14 +83,15 @@ if not isExist:
 # I do this by importing them once, flipping the normals, then importing it again on top.
 # Then export as an object
 
-listofDirs=list(glob.glob(startPath+"/*"))
-print(listofDirs)
+
+# print(listofDirs)
 
 for filename in listofDirs:
     if re.search("stl", filename):
         print("FOUND STL\n\n\n")
         print(filename)
         if os.path.isfile(filename):
+            print("FOUND STL\n\n\n")
             print(filename)
             bpy.ops.import_mesh.stl(filepath=filename)
             objects = bpy.context.scene.objects
@@ -115,7 +111,8 @@ for filename in listofDirs:
             scene = bpy.context.scene
 
             bpy.ops.object.select_all(action='SELECT')
-            bpy.ops.export_scene.obj(filepath=endPath+"/DoubleSided"+os.path.basename(filename)[:-3]+"obj",use_selection=True)
+            # print(endPath+"/DS"+os.path.basename(filename)[:-3]+"obj")
+            bpy.ops.export_scene.obj(filepath=endPath+"/"+os.path.basename(filename)[:-3]+"obj",use_selection=True)
             bpy.ops.object.delete()
             #for obj in objects:
             #    print(obj.name)

@@ -1,0 +1,81 @@
+---
+
+- name: create the OBJ folder if it does not exist
+  file:
+    path: ../processFiles/7-rotatedOBJ
+    state: directory
+
+- name: find each directory containing obj files
+  find:
+    paths: ../processFiles/6-RotatedSTLFrames
+    file_type: directory
+  register: STLFiles
+
+- name: Show file paths
+  debug:
+    msg: "{{ item.path }}"
+  with_items: "{{ STLFiles.files }}"
+
+- name: Show file paths basename
+  debug:
+    msg: "{{ item.path | basename }}"
+  with_items: "{{ STLFiles.files }}"
+
+- name: create the Basename folder if it does not exist
+  file:
+    path: "../processFiles/7-rotatedOBJ/{{ item.path | basename }}"
+    state: directory
+  with_items: "{{ STLFiles.files }}"
+
+- name: Show file paths dirname
+  debug:
+    msg: "{{ item.path | dirname }}"
+  with_items: "{{ STLFiles.files }}"
+
+- name: get the root dir and show
+  become: yes
+  command: pwd
+  register: result
+  with_nested:
+    - "{{ STLFiles.files }}"
+    
+- name: find each starting stl file in order to get information on the subdirs (wanted to do this a more elegant way but couldn't)
+  find:
+    paths: ../processFiles/6-RotatedSTLFrames
+    patterns: "*0000.stl"
+    recurse: yes
+  register: STLFiles
+
+- name: This returns the name of the main original animation
+  debug:
+    msg: "{{ item.path | dirname }}"
+  with_items: "{{ STLFiles.files }}"
+
+- name: This returns the path of the exact animation
+  debug:
+    msg: "{{ item.path }}"
+  with_items: "{{ STLFiles.files }}"
+
+- name: Convert the stl back to a flipped obj, a nonflipped obj then combine the two
+  become: yes
+  command: "'/mnt/c/Program Files/Blender Foundation/Blender 3.2/blender.exe'  -b -P /roles/5.1ConvertBackToOBJ/files/convertBackToObjDoubleSided.py -- {{ item.path | dirname | regex_search('[^\/]+(?=\/[^\/]+\/?$)')}} {{ item.path  | regex_search('[^\/]+(?=\/[^\/]+\/?$)')}}"
+  with_nested:
+  - "{{ STLFiles.files }}"
+  register: result
+
+- name: find each .mtl file which we won't need
+  find:
+    paths: ../processFiles/7-rotatedOBJ
+    patterns: "*.mtl"
+    recurse: yes
+  register: mtlFiles
+
+- name: remove the .mtl files
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ mtlFiles.files }}"
+
+- name: Show output from the python script
+  debug:
+    var: result

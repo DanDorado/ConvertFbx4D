@@ -1,4 +1,5 @@
-ansible-playbook main.yaml -e ansible_become_pass={{ PASS }}
+ansible-playbook main.yaml -i inventory -e ansible_become_pass={{ PASS }}
+
 
 I presume Blender is installed, and I presume it has the path as my current installation:
 

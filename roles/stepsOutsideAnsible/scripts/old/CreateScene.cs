@@ -18,8 +18,6 @@ public class CreateRoom : EditorWindow {
 
     // Default paths used to take in files
     string importLocation = "C:/Users/DanDo/OneDrive/Desktop/FinalFrames/ansibleexports";
-    string animationName = "3xFish_Cube.001";
-    string exact4dShape =  "3xFish_Cube.001_KL_sAxis-0_oDis-1.1_rota-10.0_fr-200_HP-CoolHyperplane";
 
     // Creates a toolbar, when selected implicitly calls ShowWindow()
     [MenuItem("DansCustomTools/Import New 4d Shapes")]
@@ -36,8 +34,6 @@ public class CreateRoom : EditorWindow {
     {
         // Default paths, can be changed
         importLocation = EditorGUILayout.TextField("Import Location", importLocation);
-        animationName = EditorGUILayout.TextField("Animation", animationName);
-        exact4dShape = EditorGUILayout.TextField("4d Shape", exact4dShape);
 
         // Once happy, pressing this will begin the creation of a new room and populating with the 4d items.
         if (GUILayout.Button("Import Everything"))
@@ -45,23 +41,6 @@ public class CreateRoom : EditorWindow {
             this.ImportAllTotal(importLocation);
         }
             
-        // Needs doing, probably need to change the way the ansible script creates (or have it create a .txt file or something which contains tags)
-        if (GUILayout.Button("Import all of animation"))
-        {
-            var newScene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
-            // var newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            this.ImportAllFromAnimation(importLocation, animationName);
-            var SaveOK = EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene(), "Assets/Scenes/"+animationName+".unity");
-        }
-
-        if (GUILayout.Button("Import an exact 4d Animation"))
-        {
-            // Creates a default room (eventually probably switch this to be empty once VR integrated, then runs an ImportShapeto create it)
-            var newScene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
-            // var newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            this.Import4DShape(importLocation, animationName, exact4dShape, 0);
-            var SaveOK = EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene(), "Assets/Scenes/"+exact4dShape+".unity");
-        }
         if (GUILayout.Button("Close"))
             this.Close();
     }
@@ -69,39 +48,19 @@ public class CreateRoom : EditorWindow {
     private void ImportAllTotal(string importLocation)
     {
         string dirPath = importLocation;
-        string[] dirs = Directory.GetDirectories(dirPath, "*", SearchOption.TopDirectoryOnly);
 
-        foreach (string dir in dirs) 
-        {
-            Debug.Log(dir);
-            Debug.Log(Path.GetFileName(dir));
-            Debug.Log("3xFish_Cube.001");
-            string thePath=Path.GetFileName(dir);
-            // thePath="3xFish_Cube.001";
-            var newScene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
-            // var newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            this.ImportAllFromAnimation(importLocation, thePath);
-            var SaveOK = EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene(), "Assets/Scenes/"+thePath+".unity");
-        }
+        this.ImportAllFromAnimation(importLocation);
+        var SaveOK = EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene(), "Assets/Scenes/TestScene.unity");
     }
 
 
-    private void ImportAllFromAnimation(string importLocation, string animationName)
+    private void ImportAllFromAnimation(string importLocation)
     {
-        string dirPath = importLocation+"/"+animationName;
-        string[] dirs = Directory.GetDirectories(dirPath, "*", SearchOption.TopDirectoryOnly);
-
-        int i = 0;
-
-        foreach (string dir in dirs) {
-            var dirName = new DirectoryInfo(dir).Name;
-            this.Import4DShape(importLocation, animationName, dirName, i);
-            i=i+1;
-        }
+        this.Import4DShape(importLocation);
     }
 
     // Use the TextureImporter to modify the texture to the correct settings
-    private void Import4DShape(string importLocation, string animationName, string exact4dShape, int offset)
+    private void Import4DShape(string importLocation)
     {
         //Gets the full path of where the .obj files are created by the ansible script.
         // Creates a Megacache object using the Megacache package.
@@ -118,20 +77,22 @@ public class CreateRoom : EditorWindow {
         //
 
 
-        string fullPath = importLocation+"/"+animationName+"/"+exact4dShape;
+        string fullPath = importLocation;
         Debug.Log("Path is: "+fullPath);
         string[] objectFiles = Directory.GetFiles(fullPath);
         EditorApplication.ExecuteMenuItem("GameObject/Create Other/MegaCache/OBJ Cache");
         GameObject newMegaCache = GameObject.Find("Mega Cache Obj");
 
-        newMegaCache.name=exact4dShape;
+        newMegaCache.name="4DObject";
         Vector3 megaCacheObjectVector=newMegaCache.transform.position;
+        newMegaCache.transform.position=new Vector3(0.0f, 1.1f, 0.0f);
 
-        newMegaCache.transform.position=new Vector3(0.0f, 0.0f, (25.0f*offset));
+        Vector3 megaCacheObjectScale=newMegaCache.transform.localScale;
+        newMegaCache.transform.localScale=new Vector3(0.04f, 0.04f, 0.04f);
 
         Debug.Log(megaCacheObjectVector.x);
 
-        Debug.Log(GameObject.Find(exact4dShape).transform.position);
+        Debug.Log(GameObject.Find("4DObject").transform.position);
 
         // newMegaCache.transform.position.z=(newMegaCache.transform.position.z+(1.0f*i));
 

@@ -8,15 +8,17 @@ File - Build Settings
 
 Platform -> Android
 
+Plug in Oculus Quest and power on
+
 Run Device -> Oculus Quest 2
 
 Switch Platform
 ____
 Edit - Project Settings
 
-Company Name -> DanDorado
+Player -> Company Name -> DanDorado
 
-XR Plug-In Management
+XR Plug-In Management -> Install
 
 Tick Oculus
 
@@ -37,3 +39,16 @@ Also Copy all of Megafiers into Assets
 DanCustomTools - ImportAll
 
 Delete CreateScene.cs
+
+___
+
+Check the files are okay
+
+
+___
+
+Delete the plane
+
+Save
+
+Build and Run

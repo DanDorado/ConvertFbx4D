@@ -1,49 +1,31 @@
 ---
 
-- name: create the OBJ folder if it does not exist
+- name: create the Obj folder if it does not exist
+  file:
+    path: ../processFiles/6-RotatedSTLFrames
+    state: directory
+
+- name: create the STL folder if it does not exist
   file:
     path: ../processFiles/7-rotatedOBJ
     state: directory
 
-- name: find each directory containing stl files
+- name: find each .obj file to import
   find:
     paths: ../processFiles/6-RotatedSTLFrames
-    file_type: directory
-  register: STLfirstSubdirs
-
-- name: Show file paths basename
-  debug:
-    msg: "{{ item.path | basename }}"
-  with_items: "{{ STLfirstSubdirs.files }}"
-
-- name: create the OBJ subdir if it does not exist
-  file:
-    path: ../processFiles/7-rotatedOBJ/{{ item.path | basename }}
-    state: directory
-  with_items: "{{ STLfirstSubdirs.files }}"
-
-- name: find each starting stl file in order to get information on the subdirs (wanted to do this a more elegant way but couldn't)
-  find:
-    paths: ../processFiles/6-RotatedSTLFrames
-    patterns: "*0000.stl"
+    patterns: "*.stl"
     recurse: yes
-  register: STLFiles
+  register: stlFiles
 
-- name: This returns the name of the main original animation
-  debug:
-    msg: "{{ item.path | dirname | regex_search('[^\/]+(?=\/[^\/]+\/?$)')}}"
-  with_items: "{{ STLFiles.files }}"
-
-- name: This returns the path of the exact animation
-  debug:
-    msg: "{{ item.path  | regex_search('[^\/]+(?=\/[^\/]+\/?$)')}}"
-  with_items: "{{ STLFiles.files }}"
-
-- name: Convert the stl back to a flipped obj, a nonflipped obj then combine the two
+- name: import the OBJ files
   become: yes
-  command: "'/mnt/c/Program Files/Blender Foundation/Blender 3.2/blender.exe'  -b -P /roles/5.1ConvertBackToOBJ/files/convertBackToObjDoubleSided.py -- {{ item.path | dirname | regex_search('[^\/]+(?=\/[^\/]+\/?$)')}} {{ item.path  | regex_search('[^\/]+(?=\/[^\/]+\/?$)')}}"
-  with_items: "{{ STLFiles.files }}"
+  command: "'/mnt/c/Program Files/Blender Foundation/Blender 3.2/blender.exe'  -b -P /roles/5.1ConvertBackToOBJ/files/convertBackToOBJ.py -- {{ item.0.path }} {{ item.1 }}"
   register: result
+  retries: 3
+  until: "result is not failed"
+  with_nested:
+    - "{{ stlFiles.files }}"
+    - "{{ overlayShapes }}"
 
 - name: find each .mtl file which we won't need
   find:
@@ -58,6 +40,6 @@
     state: absent
   with_items: "{{ mtlFiles.files }}"
 
-- name: Show output from the python script
-  debug:
-    var: result
+#- name: Shows
+#  debug:
+#    var: result

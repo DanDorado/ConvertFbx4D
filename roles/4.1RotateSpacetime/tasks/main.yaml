@@ -23,12 +23,22 @@
   with_items: "{{ spl4Files.files }}"
 
 - name: generate three perpendicular hyperplanes to serve as x,y,z to the new t/w timelike dimension
-  command: "python3 ./roles/4.1RotateSpacetime/files/rotateSpacetime.py -- {{ item.0.path }} {{ item.1.path | basename }} {{ item.2 }} {{ item.1.path | regex_search('[^\/]+(?=\/[^\/]+\/?$)')}}"
+  command: "python3 ./roles/4.1RotateSpacetime/files/getLimits.py -- {{ item.0.path }} {{ item.1.path | basename }} {{ item.2 }} {{ item.1.path | regex_search('[^\/]+(?=\/[^\/]+\/?$)')}} {{ item.3 }}"
   register: result
   with_nested:
     - "{{ hyperplaneFiles.files }}"
     - "{{ spl4Files.files }}"
     - "{{ sliceSpacetime }}"
+    - "{{ overlayShapes }}"
+
+- name: generate three perpendicular hyperplanes to serve as x,y,z to the new t/w timelike dimension
+  command: "python3 ./roles/4.1RotateSpacetime/files/rotateSpacetime.py -- {{ item.0.path }} {{ item.1.path | basename }} {{ item.2 }} {{ item.1.path | regex_search('[^\/]+(?=\/[^\/]+\/?$)')}} {{ item.3 }}"
+  register: result
+  with_nested:
+    - "{{ hyperplaneFiles.files }}"
+    - "{{ spl4Files.files }}"
+    - "{{ sliceSpacetime }}"
+    - "{{ overlayShapes }}"
 
 - name: Shows
   debug:

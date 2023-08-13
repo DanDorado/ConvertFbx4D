@@ -27,6 +27,7 @@ bpy.data.objects["Light"].select_set(True)
 bpy.data.objects["Camera"].select_set(True)
 bpy.ops.object.delete()
 
+
 ######## Convert obj to stl ##########
 
 # Import OBJ file
@@ -42,12 +43,13 @@ objects = bpy.context.scene.objects
 
 # Export each object as STL multiple times
 for obj in objects:
-    print(obj.name)
+    # Remove underscores from the object name
+    new_name = obj.name.replace("_", "")
     obj.select_set(True)
     bpy.context.view_layer.objects.active = obj
-    newpath = stlDirectory+"/"+str(timesToRepeat)+"x"+obj.name
+    newpath = stlDirectory+"/"+new_name+"_"+str(timesToRepeat)
     if not os.path.exists(newpath):
         os.makedirs(newpath)
     while (timesToRepeat>0):
-        bpy.ops.export_mesh.stl(filepath = newpath+"/"+str(timesToRepeat)+argv[1][:-4]+".stl",ascii=True,use_selection=True)
+        bpy.ops.export_mesh.stl(filepath = newpath + "/" + str(timesToRepeat) + "_" + argv[1][:-4] + ".stl", ascii=True, use_selection=True)
         timesToRepeat -= 1

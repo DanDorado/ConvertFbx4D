@@ -49,7 +49,7 @@ intersectTetrahedronTable=[[[[[[[0,3],[1,3],[2,3]]]],[[[[0,2],[0,3],[1,3]],[[0,2
 
 # Get the hyperplane and create a folder for the frames if needs be
 hyperplaneFile = str(argv[0])
-# print(hyperplaneFile)
+print(hyperplaneFile)
 hyperplanes = open(hyperplaneFile, 'r').readlines()
 hyperplaneName = os.path.basename(hyperplaneFile)
 frames = int(argv[2])
@@ -279,10 +279,6 @@ while(i<len(tetrahedrons)):
         furthNegAny=furthNegTet
     i+=1
 
-if (argv[4] == "True"):
-    furthNegAny = float(hyperplanes[4].split()[0])
-    furthPosAny = float(hyperplanes[5].split()[0])
-
 # Write the distance and note the furthest/closest of any vertex
 allPrismsDistanceInfo=[allPrismsDistanceInfo]
 allPrismsDistanceInfo.insert(0,(furthNegAny))
@@ -307,6 +303,11 @@ endingDistance=allPrismsDistanceInfo[1]
 increment=((endingDistance-startingDistance)/frames)
 #print("\n increment to seperate frames "+str(increment)+"\n")
 
+if not (os.path.exists(RotatedSTLPath+'/'+spl4Dir)):
+    os.mkdir(RotatedSTLPath+'/'+spl4Dir)
+
+if not (os.path.exists(RotatedSTLPath+'/'+spl4Dir+'/'+spl4Path[:-5]+'_fr-'+str(frames)+'_HP-'+hyperplaneName)):
+    os.mkdir(RotatedSTLPath+'/'+spl4Dir+'/'+spl4Path[:-5]+'_fr-'+str(frames)+'_HP-'+hyperplaneName)
 
 # For each frame
 # NOTE It is going to be possible (but unlikely in most animations) that there will be legitimate "blank frames", how should we deal?
@@ -316,15 +317,7 @@ while (i<frames):
     constantValue=((i*increment)+0.5*increment)+startingDistance
     #print("\nConstant to take cross-section "+str(constantValue)+" for frame "+str(i))
     # Create a new STL file where we'll write a cross section.
-    if (argv[4] == "True"):
-        dirPath = RotatedSTLPath+'/'+hyperplaneName
-        if not os.path.exists(dirPath):
-            os.makedirs(dirPath)
-        frameAsSTL = open(dirPath+'/'+spl4Path[:-5]+'_'+hyperplaneName+"_"+str(frames)+"_"+str(("%04d" % (i,)))+'.stl', 'w+')
-    else:
-        if not (os.path.exists(RotatedSTLPath+'/'+spl4Dir)):
-            os.mkdir(RotatedSTLPath+'/'+spl4Dir)
-        frameAsSTL = open(RotatedSTLPath+'/'+spl4Dir+'/'+spl4Path[:-5]+'_'+hyperplaneName+"_"+str(frames)+"_"+str(("%04d" % (i,)))+'.stl', 'w+')
+    frameAsSTL = open(RotatedSTLPath+'/'+spl4Dir+'/'+spl4Path[:-5]+'_fr-'+str(frames)+'_HP-'+hyperplaneName+'/'+spl4Path[:-5]+'_HP-'+hyperplaneName+"_"+str(("%04d" % (i,)))+'.stl', 'w+')
     frameAsSTL.write("solid Created by spacetimerotatepython\n")
     frameAsSTL.write("\n")  
     # If we are going to write the prism component
@@ -546,212 +539,44 @@ while (i<frames):
                         for triangle in polygon:
                             frameAsSTL.write("facet normal\n")
                             frameAsSTL.write("outer loop\n")
-                            #print("Triangle calculating now "+str(triangle))
-                            #print(str(tetrahedron))
-                            #print(str(constantValue))
-                            #print(str(triangle[0][0]))
-                            #print(str(tetrahedron[2][0][triangle[0][0]]))
-                            #print(str(tetrahedron[2][0][triangle[0][1]]))
-                            #print(str(tetrahedrons[j]))
                             for vertex in triangle:
-                                #print("\nVertex of triangle sits between")
-                                #print(str(vertex))
-                                #print("Point 1 coords and distance to hyperplane")
-                                #print(str(tetrahedrons[j][vertex[0]]))
-                                #print(str(tetrahedron[2][0][triangle[0][0]]-constantValue))
-                                #print("Point 2 coords and distance to hyperplane")
-                                #print(str(tetrahedrons[j][vertex[1]]))
-                                #print(str(tetrahedron[2][0][triangle[0][1]]-constantValue))
-                                #print("Point that intersect hyperplane")
-                                #print("Coords for the first point")
                                 point1x = tetrahedrons[j][vertex[0]][0]
-                                #print(str(point1x))
                                 point1y = tetrahedrons[j][vertex[0]][1]
-                                #print(str(point1y))
                                 point1z = tetrahedrons[j][vertex[0]][2]
-                                #print(str(point1z))
                                 point1w = tetrahedrons[j][vertex[0]][3]
-                                #print(str(point1w))
-                                #print("Coords for the second point")
                                 point2x = tetrahedrons[j][vertex[1]][0]
-                                #print(str(point2x))
                                 point2y = tetrahedrons[j][vertex[1]][1]
-                                #print(str(point2y))
                                 point2z = tetrahedrons[j][vertex[1]][2]
-                                #print(str(point2z))
                                 point2w = tetrahedrons[j][vertex[1]][3]
-                                #print(str(point2w))
-                                #print("Constant (e)")
-                                #print(str(constantValue))
                                 if(math.isclose(point1x, point2x, rel_tol=1e-05)):
                                     Colx=point1x
                                 elif (((a)+(b*((point2y-point1y)/(point2x-point1x)))+(c*((point2z-point1z)/(point2x-point1x)))+(d*((point2w-point1w)/(point2x-point1x))))==0):
-                                    #print("\n\nNumber of Tetrahedron to check is "+str(j))
-                                    #print("TRAP TRAP TRAP TRAP TRAPPPPPPED \n by X")
-                                    #print("\nVertex of triangle sits between")
-                                    #print(str(vertex))
-                                    #print("Point 1 coords and distance to hyperplane")
-                                    #print(str(tetrahedrons[j][vertex[0]]))
-                                    #print(str(tetrahedron[2][0][triangle[0][0]]-constantValue))
-                                    #print("Point 2 coords and distance to hyperplane")
-                                    #print(str(tetrahedrons[j][vertex[1]]))
-                                    #print(str(tetrahedron[2][0][triangle[0][1]]-constantValue))
-                                    #print("Point that intersect hyperplane")
-                                    #print("Coords for the first point")
-                                    #print(str(point1x))
-                                    #print(str(point1y))
-                                    #print(str(point1z))
-                                    #print(str(point1w))
-                                    #print("Coords for the second point")
-                                    #print(str(point2x))
-                                    #print(str(point2y))
-                                    #print(str(point2z))
-                                    #print(str(point2w))
                                     Colx=(0)
                                 else:
                                     Colx=(((d*((point1x*(point2w-point1w))/(point2x-point1x)))-(d*point1w)+(b*((point1x*(point2y-point1y))/(point2x-point1x)))-(b*point1y)+(c*((point1x*(point2z-point1z))/(point2x-point1x)))-(c*point1z)-constantValue)/((a)+(b*((point2y-point1y)/(point2x-point1x)))+(c*((point2z-point1z)/(point2x-point1x)))+(d*((point2w-point1w)/(point2x-point1x)))))
                                 if(math.isclose(point1y, point2y, rel_tol=1e-05)):
                                     Coly=point1y
                                 elif (((b)+(c*((point2z-point1z)/(point2y-point1y)))+(d*((point2w-point1w)/(point2y-point1y)))+(a*((point2x-point1x)/(point2y-point1y))))==0):
-                                    #print("\n\nNumber of Tetrahedron to check is "+str(j))
-                                    #print("TRAP TRAP TRAP TRAP TRAPPPPPPED \n by Y")
-                                    #print("\nVertex of triangle sits between")
-                                    #print(str(vertex))
-                                    #print("Point 1 coords and distance to hyperplane")
-                                    #print(str(tetrahedrons[j][vertex[0]]))
-                                    #print(str(tetrahedron[2][0][triangle[0][0]]-constantValue))
-                                    #print("Point 2 coords and distance to hyperplane")
-                                    #print(str(tetrahedrons[j][vertex[1]]))
-                                    #print(str(tetrahedron[2][0][triangle[0][1]]-constantValue))
-                                    #print("Point that intersect hyperplane")
-                                    #print("Coords for the first point")
-                                    #print(str(point1x))
-                                    #print(str(point1y))
-                                    #print(str(point1z))
-                                    #print(str(point1w))
-                                    #print("Coords for the second point")
-                                    #print(str(point2x))
-                                    #print(str(point2y))
-                                    #print(str(point2z))
-                                    #print(str(point2w))
                                     Coly=(0)
                                 else:
                                     Coly=(((a*((point1y*(point2x-point1x))/(point2y-point1y)))-(a*point1x)+(c*((point1y*(point2z-point1z))/(point2y-point1y)))-(c*point1z)+(d*((point1y*(point2w-point1w))/(point2y-point1y)))-(d*point1w)-constantValue)/((b)+(c*((point2z-point1z)/(point2y-point1y)))+(d*((point2w-point1w)/(point2y-point1y)))+(a*((point2x-point1x)/(point2y-point1y)))))
                                 if(math.isclose(point1z, point2z, rel_tol=1e-05)):
                                     Colz=point1z
                                 elif (((c)+(d*((point2w-point1w)/(point2z-point1z)))+(a*((point2x-point1x)/(point2z-point1z)))+(b*((point2y-point1y)/(point2z-point1z))))==0):
-                                    #print("\n\nNumber of Tetrahedron to check is "+str(j))
-                                    #print("TRAP TRAP TRAP TRAP TRAPPPPPPED \n by Z")
-                                    #print("\nVertex of triangle sits between")
-                                    #print(str(vertex))
-                                    #print("Point 1 coords and distance to hyperplane")
-                                    #print(str(tetrahedrons[j][vertex[0]]))
-                                    #print(str(tetrahedron[2][0][triangle[0][0]]-constantValue))
-                                    #print("Point 2 coords and distance to hyperplane")
-                                    #print(str(tetrahedrons[j][vertex[1]]))
-                                    #print(str(tetrahedron[2][0][triangle[0][1]]-constantValue))
-                                    #print("Point that intersect hyperplane")
-                                    #print("Coords for the first point")
-                                    #print(str(point1x))
-                                    #print(str(point1y))
-                                    #print(str(point1z))
-                                    #print(str(point1w))
-                                    #print("Coords for the second point")
-                                    #print(str(point2x))
-                                    #print(str(point2y))
-                                    #print(str(point2z))
-                                    #print(str(point2w))
                                     Colz=(0)
                                 else:
-                                    #print("Checking weird z")
-                                    #print(((b*((point1z*(point2y-point1y))/(point2z-point1z)))-(b*point1y)+(d*((point1z*(point2w-point1w))/(point2z-point1z)))-(d*point1w)+(a*((point1z*(point2x-point1x))/(point2z-point1z)))-(a*point1x)-constantValue))
-                                    #print("Divided by")
-                                    #print(((c)+(d*((point2w-point1w)/(point2z-point1z)))+(a*((point2x-point1x)/(point2z-point1z)))+(b*((point2y-point1y)/(point2z-point1z)))))
                                     Colz=(((b*((point1z*(point2y-point1y))/(point2z-point1z)))-(b*point1y)+(d*((point1z*(point2w-point1w))/(point2z-point1z)))-(d*point1w)+(a*((point1z*(point2x-point1x))/(point2z-point1z)))-(a*point1x)-constantValue)/((c)+(d*((point2w-point1w)/(point2z-point1z)))+(a*((point2x-point1x)/(point2z-point1z)))+(b*((point2y-point1y)/(point2z-point1z)))))
                                 if(math.isclose(point1w, point2w, rel_tol=1e-05)):
                                     Colw=point1w
                                 elif (((d)+(a*((point2x-point1x)/(point2w-point1w)))+(b*((point2y-point1y)/(point2w-point1w)))+(c*((point2z-point1z)/(point2w-point1w))))==0):
-                                    #print("\n\nNumber of Tetrahedron to check is "+str(j))
-                                    #print("TRAP TRAP TRAP TRAP TRAPPPPPPED \n by W")
-                                    #print("\nVertex of triangle sits between")
-                                    #print(str(vertex))
-                                    #print("Point 1 coords and distance to hyperplane")
-                                    #print(str(tetrahedrons[j][vertex[0]]))
-                                    #print(str(tetrahedron[2][0][triangle[0][0]]-constantValue))
-                                    #print("Point 2 coords and distance to hyperplane")
-                                    #print(str(tetrahedrons[j][vertex[1]]))
-                                    #print(str(tetrahedron[2][0][triangle[0][1]]-constantValue))
-                                    #print("Point that intersect hyperplane")
-                                    #print("Coords for the first point")
-                                    #print(str(point1x))
-                                    #print(str(point1y))
-                                    #print(str(point1z))
-                                    #print(str(point1w))
-                                    #print("Coords for the second point")
-                                    #print(str(point2x))
-                                    #print(str(point2y))
-                                    #print(str(point2z))
-                                    #print(str(point2w))
                                     Colw=(0)
                                 else:
                                     Colw=(((c*((point1w*(point2z-point1z))/(point2w-point1w)))-(c*point1z)+(a*((point1w*(point2x-point1x))/(point2w-point1w)))-(a*point1x)+(b*((point1w*(point2y-point1y))/(point2w-point1w)))-(b*point1y)-constantValue)/((d)+(a*((point2x-point1x)/(point2w-point1w)))+(b*((point2y-point1y)/(point2w-point1w)))+(c*((point2z-point1z)/(point2w-point1w)))))
-                                #print("Final coords of collision point")
-                                #print(str(Colx))
-                                #print(str(Coly))
-                                #print(str(Colz))
-                                #print(str(Colw))
-                                #print("Checking the split")
-                                #if(point2x==point1x):
-                                #    #print("Perfect match")
-                                #else:
-                                #    #print((point2x-Colx)/(Colx-point1x))
-                                #if(point2y==point1y):
-                                #    #print("Perfect match")
-                                #else:
-                                #    #print((point2y-Coly)/(Coly-point1y))
-                                #if(point2z==point1z):
-                                #    #print("Perfect match")
-                                #else:
-                                #    #print((point2z-Colz)/(Colz-point1z))
-                                #if(point2w==point1w):
-                                #    #print("Perfect match")
-                                #else:
-                                #    #print((point2w-Colw)/(Colw-point1w))
-                                #print("Converting the 4 dimensional coords of Cx,Cy,Cz,Cw into 3 dimensional fX,fY,fZ")
                                 fX=((Ax*Colx)+(Bx*Coly)+(Cx*Colz)+(Dx*Colw)/(math.sqrt((Ax**2)+(Bx**2)+(Cx**2)+(Dx**2))))
                                 fY=((Ay*Colx)+(By*Coly)+(Cy*Colz)+(Dy*Colw)/(math.sqrt((Ay**2)+(By**2)+(Cy**2)+(Dy**2))))
                                 fZ=((Az*Colx)+(Bz*Coly)+(Cz*Colz)+(Dz*Colw)/(math.sqrt((Az**2)+(Bz**2)+(Cz**2)+(Dz**2))))
-                                #print(str(fX)+str(fY)+str(fZ))
-                                #print(fX)
-                                #print(fY)
-                                #print(fZ)
                                 frameAsSTL.write("vertex "+str(fX)+" "+str(fY)+" "+str(fZ)+"\n")
-                                #CHECK THE RESPONSE TIMES FOR THE BELOW TWO METHODS
-                                #For each point which intersects the plane Xn,Yn,Zn,Wn, get the final coordinates for it compared to the plane itself. xf.yf,zf
-                                #
-                                #xf=AxXn+BxYn+CxZn+DxWn/(sqrt(AxAx+BxBx+CxCx+DxDx))
-                                #
-                                #xf=Xn+Zn((-a-d)/c)+Wn/(sqrt(2+((-a-d)(-a-d)/cc)))
-                                #
-                                #yf=AyXn+ByYn+CyZn+DyWn/(sqrt(AyAy+ByBy+CyCy+DyDy))
-                                #
-                                #yf=-abXn+Yn(aa+cc+dd)-cbZn-dbWn/((-ab)(-ab)+(aa+cc+dd)(aa+bb+cc)+(-cb)(-cb)+(-db)(-db))
-                                #
-                                #zf=AzXn+BzYn+CzZn+DzWn/(sqrt(AzAz+BzBz+CzCz+DzDz))
-                                #
-                                #zf=Xn+Zn((c(d-a))/(d(a+d)+cc))+Wn((ad-aa+cc)/(d(a+d)+cc))
                             frameAsSTL.write("endloop\n")
                             frameAsSTL.write("endfacet\n")  
             j=j+1
-
-    if (argv[4] == "True"):
-        frameAsSTL.write("PlaceholderPolygon")
-        frameAsSTL.write("facet normal\n")
-        frameAsSTL.write("outer loop\n")
-        frameAsSTL.write("vertex -1.8 0.0 -9.2\n")
-        frameAsSTL.write("vertex -1.8 0.0 -10.6\n")
-        frameAsSTL.write("vertex -0.0 0.0 -9.22\n")
-        frameAsSTL.write("endloop\n")
-        frameAsSTL.write("endfacet\n")
-
     i+=1

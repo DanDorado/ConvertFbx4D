@@ -48,18 +48,14 @@ public class CreateRoom : EditorWindow {
         // Needs doing, probably need to change the way the ansible script creates (or have it create a .txt file or something which contains tags)
         if (GUILayout.Button("Import all of animation"))
         {
-            // var newScene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
-            // var newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            this.ImportAllFromAnimation(importLocation, animationName, 0);
+            this.ImportAllFromAnimation(importLocation, animationName);
             var SaveOK = EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene(), "Assets/Scenes/"+animationName+".unity");
         }
 
         if (GUILayout.Button("Import an exact 4d Animation"))
         {
             // Creates a default room (eventually probably switch this to be empty once VR integrated, then runs an ImportShapeto create it)
-            // var newScene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
-            // var newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            this.Import4DShape(importLocation, animationName, exact4dShape, 0, 0);
+            this.Import4DShape(importLocation, animationName, exact4dShape, 0);
             var SaveOK = EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene(), "Assets/Scenes/"+exact4dShape+".unity");
         }
         if (GUILayout.Button("Close"))
@@ -70,7 +66,7 @@ public class CreateRoom : EditorWindow {
     {
         string dirPath = importLocation;
         string[] dirs = Directory.GetDirectories(dirPath, "*", SearchOption.TopDirectoryOnly);
-        int row=0;
+
         foreach (string dir in dirs) 
         {
             Debug.Log(dir);
@@ -78,31 +74,29 @@ public class CreateRoom : EditorWindow {
             Debug.Log("3xFish_Cube.001");
             string thePath=Path.GetFileName(dir);
             // thePath="3xFish_Cube.001";
-            // var newScene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
-            // var newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            this.ImportAllFromAnimation(importLocation, thePath, row);
-            // var SaveOK = EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene(), "Assets/Scenes/"+thePath+".unity");
-            row=row+1;
+            this.ImportAllFromAnimation(importLocation, thePath);
+            var SaveOK = EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene(), "Assets/Scenes/"+thePath+".unity");
         }
     }
 
 
-    private void ImportAllFromAnimation(string importLocation, string animationName, int row)
+    private void ImportAllFromAnimation(string importLocation, string animationName)
     {
         string dirPath = importLocation+"/"+animationName;
         string[] dirs = Directory.GetDirectories(dirPath, "*", SearchOption.TopDirectoryOnly);
 
+        float startingOffset = ((-1*dirs.Length-1)/2);
         int i = 0;
 
         foreach (string dir in dirs) {
             var dirName = new DirectoryInfo(dir).Name;
-            this.Import4DShape(importLocation, animationName, dirName, i, row);
+            this.Import4DShape(importLocation, animationName, dirName, (startingOffset+(float)i));
             i=i+1;
         }
     }
 
     // Use the TextureImporter to modify the texture to the correct settings
-    private void Import4DShape(string importLocation, string animationName, string exact4dShape, int offset, int row)
+    private void Import4DShape(string importLocation, string animationName, string exact4dShape, float offset)
     {
         //Gets the full path of where the .obj files are created by the ansible script.
         // Creates a Megacache object using the Megacache package.
@@ -127,10 +121,10 @@ public class CreateRoom : EditorWindow {
 
         newMegaCache.name=exact4dShape;
         Vector3 megaCacheObjectVector=newMegaCache.transform.position;
+        newMegaCache.transform.position=new Vector3(offset, 1.1f, offset);
 
-        newMegaCache.transform.position=new Vector3(-1f+(0.5f*offset), 1.4f, (1.5f*row));
-
-        newMegaCache.transform.localScale=new Vector3( 0.04f, 0.04f, 0.04f);
+        Vector3 megaCacheObjectScale=newMegaCache.transform.localScale;
+        newMegaCache.transform.localScale=new Vector3(0.04f, 0.04f, 0.04f);
 
         Debug.Log(megaCacheObjectVector.x);
 

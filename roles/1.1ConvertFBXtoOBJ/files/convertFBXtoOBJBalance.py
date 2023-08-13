@@ -52,9 +52,13 @@ objects = bpy.context.scene.objects
 for obj in objects:
     # Check if the frame contains the Armature name using regex
     if re.search("Armature", obj.name):
-        # If so create a directory for the animation and export it
-        newpath = obj_directory + "/" + obj.name
+        # Remove underscores from the object name
+        new_name = obj.name.replace("_", "")
+        
+        # If so, create a directory for the animation and export it
+        newpath = obj_directory + "/" + new_name
         if not os.path.exists(newpath):
             os.makedirs(newpath)
+        
         bpy.context.view_layer.objects.active = obj
-        bpy.ops.export_scene.obj(filepath=newpath + "/" + obj.name + ".obj", use_animation=True)
+        bpy.ops.export_scene.obj(filepath=newpath + "/" + new_name + ".obj", use_animation=True)
